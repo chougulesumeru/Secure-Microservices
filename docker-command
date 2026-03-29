@@ -16,5 +16,5 @@ stop and remove the container
 > docker stop todo-container && docker rm todo-container 
 
 #scan image for vulnerabilities (secure step)
-# tirvy is open source scanner 
-tirvy image todo-app:latest
+# trivy is open source scanner 
+trivy image todo-app:latest
