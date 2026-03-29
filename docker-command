@@ -1,0 +1,20 @@
+> docker build -t todo-app:latest .
+
+run the container 
+> docker run -d -it -p 3000:3000 --name todo-container todo-app:latest
+
+checking the running containers 
+> docker ps or docker container list 
+
+viwe logs 
+> docker logs todo-container
+
+execute shell inside that container
+> docker exec -it todo-container bash 
+
+stop and remove the container 
+> docker stop todo-container && docker rm todo-container 
+
+#scan image for vulnerabilities (secure step)
+# tirvy is open source scanner 
+tirvy image todo-app:latest
