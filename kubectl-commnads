@@ -1,0 +1,26 @@
+apply all 
+> kubectl apply -f k8s-manifest-files/
+
+watch pod come up
+> kubectl watch pod -n microservice-ns
+
+describe a pod for events and debug info
+> kuectl descibe pod <pod-name> -n microservice-ns
+
+view pod logs 
+> kubectl logs <pod-name> -n microservice-ns --follow
+
+go inside the pod 
+> kubectl exec -it <pod-name> todo-app bash
+
+check hpa status 
+> kubectl get hpa -n microservice-ns
+
+check rollout status 
+> kubectl rollout status deployment/microservice-deployment -n microservice-ns
+
+rollback to previous version
+> kubectl rollout undo deployment/microservice-deployment -n  microservice-ns
+
+port forward a pod for local hosting 
+> kubectl port-forward deployment/microservice-deployment 3000:3000 -n microservice-ns
