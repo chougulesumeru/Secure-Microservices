@@ -1,0 +1,56 @@
+# Deployment - the core workload
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice-deployment
+  namespace: microservice-ns
+spec:
+  #run 3 replicas of our pod for high availability
+  replicas: 3
+
+  # which pod does this deployment manage
+  selector:
+    matchLabels:
+      app: microservice-ns
+
+  # strategy how to rollback out updates
+  strategy:
+    type: type:RollingUpadate
+    rollingUpadate:
+      maxSurge: 1 # allow extra pod during update
+      maxUnavailable: 0 # never take down before a new pod is read
+
+  template:
+    metadata:
+      name: microservice-deployment
+      labels:
+        app: microservice-ns
+      version: latest
+    spec:
+      containers:
+        - name: todo-app
+          image: <account>.dkr.ecr.us-eats-2.amazonaws.com/todo-app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+
+          env:
+            - name: NODE_ENV
+              valuesFrom:
+                configMapRef:
+                  name: microservice-config
+                  key: NODE_ENV
+
+            - name: port
+              valuesFrom:
+                configMapRef:
+                  name: microservice-config
+                  key: PORT
+
+            - name: DB_PASSWORD
+              valuesFrom:
+                secretKeyRef:
+                  name: microservice-secret
+                  key: DB_PASSWORD
