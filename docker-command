@@ -18,3 +18,10 @@ stop and remove the container
 #scan image for vulnerabilities (secure step)
 # trivy is open source scanner 
 trivy image todo-app:latest
+
+
+
+# run docker-compose file 
+docker-compose up -d 
+docker-compose logs -f app 
+docker-compose down 
