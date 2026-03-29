@@ -1,0 +1,12 @@
+# configMap.yml (non-sensitive configuration)
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microservice-config
+  namespace: microservice-ns
+
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  LOG_LEVEL: "info"
