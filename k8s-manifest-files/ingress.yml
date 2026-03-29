@@ -1,0 +1,25 @@
+# ingress : external traffic routing
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+meatadata:
+  name: microservice-ingress
+  namespace: microservice-ns
+spec:
+  rules:
+    - host: todo.yourdomain.com
+      http:
+        paths:
+          path:
+            pathType: Prefix
+            backend:
+              service:
+                name: microservice-svc
+                port:
+                  number: 80
+
+# tls configuration
+tls:
+  - hosts:
+      - todo.yourdomain.com
+    secretName: todo-tls-secret

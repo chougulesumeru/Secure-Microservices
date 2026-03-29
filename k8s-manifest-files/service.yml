@@ -1,0 +1,20 @@
+# service - stable network access to pods
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: microservice-svc
+  namespace: microservice-ns
+spec:
+  selector:
+    app: microservice-ns
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+
+  # clusterIP- omnly accessible inside the cluster
+  type: ClusterIP
+
+# node port: exposed to each nodes IP
+# load balancer: creates a cloud load balancer

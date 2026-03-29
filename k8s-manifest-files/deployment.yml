@@ -79,7 +79,7 @@ spec:
               path: /health
               port: 3000
             initialDelaySeconds: 5
-            periodSEconds: 5
+            periodSeconds: 5
             failureThreshold: 3
 
           #startup probes: for slow starting apps: disable liveliness and readiness
