@@ -54,3 +54,47 @@ spec:
                 secretKeyRef:
                   name: microservice-secret
                   key: DB_PASSWORD
+
+          #resource limit - prevents one pod from starving others
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+
+          # liveliness probe - it container alive ? restart if fails
+          livelinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30 # wait 30 sec before first check
+            periodSeconds: 10 # check every 10 sec
+            failureThreshold: 3 # restart after 3 consecutive failure
+
+          # readiness probe - is the container ready to receive the traffic?
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSEconds: 5
+            failureThreshold: 3
+
+          #startup probes: for slow starting apps: disable liveliness and readiness
+          # during startup
+          startupProbe:
+            httpGet:
+              path: ./health
+              port: 3000
+            periodeSeconds: 10
+            failureThreshold: 30
+
+          volumeMounts:
+            - name: microservice-volume
+              mountPath: /tmp
+
+    volumes:
+      - name: microservice-volume
+        emptyDir: {}
