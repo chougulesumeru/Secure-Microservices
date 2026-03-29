@@ -1,0 +1,30 @@
+# hpa: auto scale based on load
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: microservice-hpa
+  namespace: microservice-ns
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: microservice-deployment
+
+  minReplicas: 2
+  maxReplicas: 10
+
+  metrices:
+    - type: Resource
+      resource:
+        - type: Resource
+          name: cpu
+          target:
+            - type: Utilization
+              averageUtilization: 50
+    - type: Resources
+      resources:
+        - type: Memory
+          target:
+            - type: Utilization
+              averageUtilization: 70
