@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+   app:
+     build: .
+     ports:
+       - "3000:3000"
+     environment:
+       - MONGODB_URL= mongodb://mongo:27017//todos
+   
+
+   mongo:
+     image: mongo
+     ports:
+       - "27017:27017"
