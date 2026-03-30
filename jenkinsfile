@@ -1,0 +1,69 @@
+pipeline {
+    // run on any available agent or specify lable for dedicated agent
+    agent any 
+
+    //pipeline level environment
+    environment {
+        AWS_CREDENTIAL= credentials('aws_credential')
+        SONAR_TOKEN= credentials('sonar-token')
+
+        //configuration
+        AWS_REGION='us-east-2'
+        ECR_REGISRTY='<account>.dkr.ecr.us-east-2.amazonaws.com'
+        ECR_REPO='todo-app'
+        IMAGE_TAG= '${BUILD_NUMBER}'
+        CLUSTER_NAME='todo-app-cluster'
+        KUBERNETES_NS='todo-app'
+        SONAR_PROJECT_KEY= 'secure-todo-app'
+    }
+
+    stages {
+        stage('Git checkout'){
+            steps{
+                checkout scm
+                git branch= 'main', url= 'https://github.com/chougulesumeru/Secure-Microservices.git'
+            }
+        }
+
+        //stage 2: install and unit test
+        stage('test'){
+            steps{
+                dir('app'){
+                    sh 'npm ci'     //clean install -reproducible builds 
+                    sh 'npm test -- --coverage'  //run test with coverage
+                }
+            }
+        }
+
+        //static application security testing
+        stage('SAST Sonarqube'){
+            steps {
+                withSonarQubeEnv('SonarQube'){
+                    sh """
+                       sonar-scanner \
+                       -Dsonar.projectKey= ${SONAR_PROJECT_KEY} \
+                       -Dsonar.source= app/src \
+                       -Dsonar.login=${SONAR_TOKEN} \
+                       -Dsonar.javascript.lcov.reportPaths=app/coverage/lcov.info \
+
+                    """
+                }
+            }
+        }
+
+        stage('QualityGate'){
+            steps {
+                //falied the build if code quality doesnt build the threshold
+                waitForQualityGate abortPipeline: true
+            }
+        }
+
+        //build docker image
+        stage('build docker image'){
+            steps{
+                IMAGE_FULL="${env.ECR_REGISRTY}/${env.ECR_REPO}:${env.IMAGE_TAG}"
+                IMAGE_LATEST= "${env.ECR_REGISTRY}/${env.ECR_REPO}:latest"
+            }
+        }
+    }
+}
